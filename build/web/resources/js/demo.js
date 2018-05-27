@@ -1,9 +1,8 @@
 type = ['', 'info', 'success', 'warning', 'danger'];
-
-
+var mesString;
 demo = {
-    initPickColor: function() {
-        $('.pick-class-label').click(function() {
+    initPickColor: function () {
+        $('.pick-class-label').click(function () {
             var new_class = $(this).attr('new-class');
             var old_class = $('#display-buttons').attr('data-class');
             var display_div = $('#display-buttons');
@@ -15,8 +14,7 @@ demo = {
             }
         });
     },
-
-    initDocumentationCharts: function() {
+    initDocumentationCharts: function () {
         /* ----------==========     Daily Sales Chart initialization For Documentation    ==========---------- */
 
         dataDailySalesChart = {
@@ -25,7 +23,6 @@ demo = {
                 [12, 17, 7, 17, 23, 18, 38]
             ]
         };
-
         optionsDailySalesChart = {
             lineSmooth: Chartist.Interpolation.cardinal({
                 tension: 0
@@ -41,216 +38,154 @@ demo = {
         }
 
         var dailySalesChart = new Chartist.Line('#dailySalesChart', dataDailySalesChart, optionsDailySalesChart);
-
         md.startAnimationForLineChart(dailySalesChart);
     },
 
-    initDashboardPageCharts: function() {
+    setValues: function () {
 
-        /* ----------==========     Daily Sales Chart initialization    ==========---------- */
-
-        dataDailySalesChart = {
-            labels: ['M', 'T', 'W', 'T', 'F', 'S', 'S'],
-            series: [
-                [12, 17, 7, 17, 23, 18, 38]
-            ]
-        };
-
-        optionsDailySalesChart = {
-            lineSmooth: Chartist.Interpolation.cardinal({
-                tension: 0
-            }),
-            low: 0,
-            high: 50, // creative tim: we recommend you to set the high sa the biggest value + something for a better look
-            chartPadding: {
-                top: 0,
-                right: 0,
-                bottom: 0,
-                left: 0
+        $.ajax({url: "http://35.190.173.148/sensors",
+            headers: {'x-access-token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6Ik1pY2hlbGxlIiwiX2lkIjoiNWFmMWQyYzc4OTAxY2IxMGJiY2I3MTdlIiwidXNlclR5cGUiOiJVc2VyIiwiaWF0IjoxNTI3MDM1NjAxLCJleHAiOjE1MzAwNTk2MDF9.qzUGStVuHbQEhENgCoNj5wcHObyrmwX5fN9f7jpT1t0',
+                'Cache-Control': 'no-cache'
             },
-        }
+            success: function (result) {
+                var mes = new Date(result[0].updatedAt);
+                mes = mes.getMonth() + 1;
+                mesString = mes.toString();
 
-        var dailySalesChart = new Chartist.Line('#dailySalesChart', dataDailySalesChart, optionsDailySalesChart);
+                console.log('En setValues ' + mesString);
 
-        md.startAnimationForLineChart(dailySalesChart);
+                console.log('En initDash ' + mesString);
 
+                /* ----------==========     Daily Sales Chart initialization    ==========---------- */
+                dataDailySalesChart = {
+                    labels: ['M', 'T', 'W', 'T', 'F', 'S', 'S'],
+                    series: [
+                        [15, 15, 15, 17, 23, 18, 38]
+                    ]
+                };
+                optionsDailySalesChart = {
+                    lineSmooth: Chartist.Interpolation.cardinal({
+                        tension: 0
+                    }),
+                    low: 0,
+                    high: 50, // creative tim: we recommend you to set the high sa the biggest value + something for a better look
+                    chartPadding: {
+                        top: 0,
+                        right: 0,
+                        bottom: 0,
+                        left: 0
+                    },
+                }
 
+                var dailySalesChart = new Chartist.Line('#dailySalesChart', dataDailySalesChart, optionsDailySalesChart);
+                md.startAnimationForLineChart(dailySalesChart);
+                /* ----------==========     Completed Tasks Chart initialization    ==========---------- */
 
-        /* ----------==========     Completed Tasks Chart initialization    ==========---------- */
+                console.log('En initDash ' + mesString);
+                dataCompletedTasksChart = {
 
-        dataCompletedTasksChart = {
-            labels: ['12am', '3pm', '6pm', '9pm', '12pm', '3am', '6am', '9am'],
-            series: [
-                [230, 750, 450, 300, 280, 240, 200, 190]
-            ]
-        };
-
-        optionsCompletedTasksChart = {
-            lineSmooth: Chartist.Interpolation.cardinal({
-                tension: 0
-            }),
-            low: 0,
-            high: 1000, // creative tim: we recommend you to set the high sa the biggest value + something for a better look
-            chartPadding: {
-                top: 0,
-                right: 0,
-                bottom: 0,
-                left: 0
-            }
-        }
-
-        var completedTasksChart = new Chartist.Line('#completedTasksChart', dataCompletedTasksChart, optionsCompletedTasksChart);
-
-        // start animation for the Completed Tasks Chart - Line Chart
-        md.startAnimationForLineChart(completedTasksChart);
-
-
-        /* ----------==========     Emails Subscription Chart initialization    ==========---------- */
-
-        var dataEmailsSubscriptionChart = {
-            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-            series: [
-                [542, 443, 320, 780, 553, 453, 326, 434, 568, 610, 756, 895]
-
-            ]
-        };
-        var optionsEmailsSubscriptionChart = {
-            axisX: {
-                showGrid: false
-            },
-            low: 0,
-            high: 1000,
-            chartPadding: {
-                top: 0,
-                right: 5,
-                bottom: 0,
-                left: 0
-            }
-        };
-        var responsiveOptions = [
-            ['screen and (max-width: 640px)', {
-                seriesBarDistance: 5,
-                axisX: {
-                    labelInterpolationFnc: function(value) {
-                        return value[0];
+                    labels: [mesString, '3pm', '6pm', '9pm', '12pm', '3am', '6am', '9am'],
+                    series: [
+                        [230, 750, 450, 300, 280, 240, 200, 190]
+                    ]
+                };
+                optionsCompletedTasksChart = {
+                    lineSmooth: Chartist.Interpolation.cardinal({
+                        tension: 0
+                    }),
+                    low: 0,
+                    high: 1000, // creative tim: we recommend you to set the high sa the biggest value + something for a better look
+                    chartPadding: {
+                        top: 0,
+                        right: 0,
+                        bottom: 0,
+                        left: 0
                     }
                 }
-            }]
-        ];
-        var emailsSubscriptionChart = Chartist.Bar('#emailsSubscriptionChart', dataEmailsSubscriptionChart, optionsEmailsSubscriptionChart, responsiveOptions);
 
-        //start animation for the Emails Subscription Chart
-        md.startAnimationForBarChart(emailsSubscriptionChart);
+                var completedTasksChart = new Chartist.Line('#completedTasksChart', dataCompletedTasksChart, optionsCompletedTasksChart);
+                // start animation for the Completed Tasks Chart - Line Chart
+                md.startAnimationForLineChart(completedTasksChart);
+                /* ----------==========     Emails Subscription Chart initialization    ==========---------- */
 
+                var dataEmailsSubscriptionChart = {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                    series: [
+                        [542, 443, 320, 780, 553, 453, 326, 434, 568, 610, 756, 895]
+
+                    ]
+                };
+                var optionsEmailsSubscriptionChart = {
+                    axisX: {
+                        showGrid: false
+                    },
+                    low: 0,
+                    high: 1000,
+                    chartPadding: {
+                        top: 0,
+                        right: 5,
+                        bottom: 0,
+                        left: 0
+                    }
+                };
+                var responsiveOptions = [
+                    ['screen and (max-width: 640px)', {
+                            seriesBarDistance: 5,
+                            axisX: {
+                                labelInterpolationFnc: function (value) {
+                                    return value[0];
+                                }
+                            }
+                        }]
+                ];
+                var emailsSubscriptionChart = Chartist.Bar('#emailsSubscriptionChart', dataEmailsSubscriptionChart, optionsEmailsSubscriptionChart, responsiveOptions);
+                //start animation for the Emails Subscription Chart
+                md.startAnimationForBarChart(emailsSubscriptionChart);
+
+
+            }});
     },
 
-    initGoogleMaps: function() {
-        var myLatlng = new google.maps.LatLng(40.748817, -73.985428);
-        var mapOptions = {
-            zoom: 13,
-            center: myLatlng,
-            scrollwheel: false, //we disable de scroll over the map, it is a really annoing when you scroll through page
-            styles: [{
-                "featureType": "water",
-                "stylers": [{
-                    "saturation": 43
-                }, {
-                    "lightness": -11
-                }, {
-                    "hue": "#0088ff"
-                }]
-            }, {
-                "featureType": "road",
-                "elementType": "geometry.fill",
-                "stylers": [{
-                    "hue": "#ff0000"
-                }, {
-                    "saturation": -100
-                }, {
-                    "lightness": 99
-                }]
-            }, {
-                "featureType": "road",
-                "elementType": "geometry.stroke",
-                "stylers": [{
-                    "color": "#808080"
-                }, {
-                    "lightness": 54
-                }]
-            }, {
-                "featureType": "landscape.man_made",
-                "elementType": "geometry.fill",
-                "stylers": [{
-                    "color": "#ece2d9"
-                }]
-            }, {
-                "featureType": "poi.park",
-                "elementType": "geometry.fill",
-                "stylers": [{
-                    "color": "#ccdca1"
-                }]
-            }, {
-                "featureType": "road",
-                "elementType": "labels.text.fill",
-                "stylers": [{
-                    "color": "#767676"
-                }]
-            }, {
-                "featureType": "road",
-                "elementType": "labels.text.stroke",
-                "stylers": [{
-                    "color": "#ffffff"
-                }]
-            }, {
-                "featureType": "poi",
-                "stylers": [{
-                    "visibility": "off"
-                }]
-            }, {
-                "featureType": "landscape.natural",
-                "elementType": "geometry.fill",
-                "stylers": [{
-                    "visibility": "on"
-                }, {
-                    "color": "#b8cb93"
-                }]
-            }, {
-                "featureType": "poi.park",
-                "stylers": [{
-                    "visibility": "on"
-                }]
-            }, {
-                "featureType": "poi.sports_complex",
-                "stylers": [{
-                    "visibility": "on"
-                }]
-            }, {
-                "featureType": "poi.medical",
-                "stylers": [{
-                    "visibility": "on"
-                }]
-            }, {
-                "featureType": "poi.business",
-                "stylers": [{
-                    "visibility": "simplified"
-                }]
-            }]
-
-        }
-        var map = new google.maps.Map(document.getElementById("map"), mapOptions);
-
-        var marker = new google.maps.Marker({
-            position: myLatlng,
-            title: "Hello World!"
-        });
-
-        // To add the marker to the map, call setMap();
-        marker.setMap(map);
+//    initDashboardPageCharts: function () {
+//
+//
+//    },
+    initSensores: function () {
+        $.ajax({url: "http://35.190.173.148/data",
+            headers: {'x-access-token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6Ik1pY2hlbGxlIiwiX2lkIjoiNWFmMWQyYzc4OTAxY2IxMGJiY2I3MTdlIiwidXNlclR5cGUiOiJVc2VyIiwiaWF0IjoxNTI3MjYzNDg1LCJleHAiOjE1MzAyODc0ODV9.1fxjobUhRQzzQCGCEh0buUA71UJvzOTPrZZ-MHoSRyw',
+                'Cache-Control': 'no-cache'
+            },
+            success: function (result) {
+               
+                var html = '<table class="table table-hover"> <thead class="text-warning"> <th>ID</th> <th>Creado en</th> <th>Valor</th> <th>Sensor</th> </thead> <tbody> ';
+                for (var i = 0; i < result.length; i++)
+                {
+                    html += '<tr> <td>' + result[i]._id + '</td> <td>' + result[i].createdAt + '</td> <td>' + result[i].value + '</td> <td>' + result[i].sensorId + '</td> </tr>';
+                }
+                html += '</tbody> </table>';
+                $("#tablaSensores").html(html);
+                }});
     },
 
-    showNotification: function(from, align) {
+    initGetSensores: function () {
+        $.ajax({url: "http://35.190.173.148/sensors",
+            headers: {'x-access-token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6Ik1pY2hlbGxlIiwiX2lkIjoiNWFmMWQyYzc4OTAxY2IxMGJiY2I3MTdlIiwidXNlclR5cGUiOiJVc2VyIiwiaWF0IjoxNTI3MjYzNDg1LCJleHAiOjE1MzAyODc0ODV9.1fxjobUhRQzzQCGCEh0buUA71UJvzOTPrZZ-MHoSRyw',
+                'Cache-Control': 'no-cache'
+            },
+            success: function (result) {
+                var html = '<table class="table table-hover"> <thead class="text-warning"> <th>ID</th> <th>Actualizado</th> <th>Creado</th> <th>Nombre</th> <th>Descripción</th> <th>Valor</th> </thead> <tbody> ';
+                for (var i = 0; i < result.length; i++)
+                {
+                    html += '<tr> <td>' + result[i]._id + '</td> <td>' + result[i].updatedAt + '</td> <td>' + result[i].createdAt + '</td> <td>' + result[i].name + '</td> <td>' + result[i].description + '</td> <td>' + result[i].variable + '</td> </tr>';
+                }
+                html += '</tbody> </table>';
+                $("#tablaLecturas").html(html);
+                //console.log(result);
+            }});
+    },
+
+    showNotification: function (from, align) {
         color = Math.floor((Math.random() * 4) + 1);
-
         $.notify({
             icon: "notifications",
             message: "Welcome to <b>Material Dashboard</b> - a beautiful freebie for every web developer."
