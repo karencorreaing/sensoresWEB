@@ -156,13 +156,52 @@ demo = {
                 'Cache-Control': 'no-cache'
             },
             success: function (result) {
-               
-                var html = '<table class="table table-hover"> <thead class="text-warning"> <th>ID</th> <th>Creado en</th> <th>Valor</th> <th>Sensor</th> </thead> <tbody> ';
+                var sensores = [];
                 for (var i = 0; i < result.length; i++)
                 {
-                    html += '<tr> <td>' + result[i]._id + '</td> <td>' + result[i].createdAt + '</td> <td>' + result[i].value + '</td> <td>' + result[i].sensorId + '</td> </tr>';
+                    var found = false;
+                    var sensorDataFound;
+                    for (var j = 0; j < sensores.length; j++)
+                    {
+                        if (sensores[j].id === result[i].sensorId) {
+                            found = true;
+                            sensorDataFound = sensores[j];
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        var sensorData = new Object();
+                        sensorData["id"] = result[i].sensorId;
+                        sensorData["medidas"] = [result[i].value];
+                        sensorData["fechasCreacion"] = [result[i].createdAt];
+                        sensores.push(sensorData);
+                    } else {
+                        //Por referencia actualiza las medidas del sensor
+                        sensorDataFound.medidas.push(result[i].value);
+                        sensorDataFound.fechasCreacion.push(result[i].createdAt);
+                    }
                 }
-                html += '</tbody> </table>';
+
+                var html = "";
+                for (var x = 0; x < sensores.length; x++) {
+                    var divHtmlIni = '<div class="col-lg-6 col-md-6">' +
+                            '<div class="card">' +
+                            '    <div class="card-header" data-background-color="orange">' +
+                            '        <h4 class="title">Mediciones ' + sensores[x].id + '</h4>' +
+                            '        <p class="category">Lista de mediciones</p>' +
+                            '    </div>' +
+                            '    <div class="card-content table-responsive" style="height:300px;overflow:auto">';
+                    var inHtml = '<table class="table table-hover"> <thead class="text-warning"> <th>Valor</th> <th>Fecha de creación</th> </thead> <tbody> ';
+                    for (var i = 0; i < sensores[x].medidas.length; i++)
+                    {
+                        inHtml += '<tr> <td>' + sensores[x].medidas[i] + '</td> <td>' + sensores[x].fechasCreacion[i] + '</td>';
+                    }
+                    inHtml += '</tbody> </table>';
+                    html += divHtmlIni + inHtml + '</div></div></div>';
+
+                }
+                console.log(sensores);
+
                 $("#tablaSensores").html(html);
                 }});
     },
