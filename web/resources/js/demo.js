@@ -156,6 +156,10 @@ demo = {
                 'Cache-Control': 'no-cache'
             },
             success: function (result) {
+                var options = {
+                    weekday: "long", year: "numeric", month: "short",
+                    day: "numeric", hour: "2-digit", minute: "2-digit"
+                };
                 var sensores = [];
                 for (var i = 0; i < result.length; i++)
                 {
@@ -171,19 +175,23 @@ demo = {
                     }
                     if (!found) {
                         var sensorData = new Object();
+                        var medida = new Object();
+                        medida["valor"] = result[i].value;
+                        medida["fecha"] = new Date(result[i].createdAt);
                         sensorData["id"] = result[i].sensorId;
-                        sensorData["medidas"] = [result[i].value];
-                        sensorData["fechasCreacion"] = [result[i].createdAt];
+                        sensorData["medidas"] = [medida];
                         sensores.push(sensorData);
                     } else {
                         //Por referencia actualiza las medidas del sensor
-                        sensorDataFound.medidas.push(result[i].value);
-                        sensorDataFound.fechasCreacion.push(result[i].createdAt);
+                        var medida = new Object();
+                        medida["valor"] = result[i].value;
+                        medida["fecha"] = new Date(result[i].createdAt);
+                        sensorDataFound.medidas.push(medida);
                     }
-                }
-
+                }                
                 var html = "";
                 for (var x = 0; x < sensores.length; x++) {
+                    sensores[x].medidas.sort(function(a,b) {return (a.fecha < b.fecha) ? 1 : ((b.fecha < a.fecha) ? -1 : 0);} );
                     var divHtmlIni = '<div class="col-lg-6 col-md-6">' +
                             '<div class="card">' +
                             '    <div class="card-header" data-background-color="orange">' +
@@ -194,7 +202,7 @@ demo = {
                     var inHtml = '<table class="table table-hover"> <thead class="text-warning"> <th>Valor</th> <th>Fecha de creación</th> </thead> <tbody> ';
                     for (var i = 0; i < sensores[x].medidas.length; i++)
                     {
-                        inHtml += '<tr> <td>' + sensores[x].medidas[i] + '</td> <td>' + sensores[x].fechasCreacion[i] + '</td>';
+                        inHtml += '<tr> <td>' + sensores[x].medidas[i].valor + '</td> <td>' + sensores[x].medidas[i].fecha.toLocaleTimeString("es-ES", options) +' '+  (i === 0 ? '<div class="badge badge-info">Ultima medida</div>':'') +'</td>';
                     }
                     inHtml += '</tbody> </table>';
                     html += divHtmlIni + inHtml + '</div></div></div>';
